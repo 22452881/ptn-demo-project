@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using PtnDemoProject.Data;
+using PtnDemoProject.Interfaces;
+using PtnDemoProject.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +39,7 @@ if(!string.IsNullOrEmpty(connStr))
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Panteon Demo", Version = "v1" });
