@@ -1,7 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualBasic;
 using PtnDemoProject.Data;
-using PtnDemoProject.DTO;
 using PtnDemoProject.Interfaces;
+using PtnDemoProject.Model;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using static PtnDemoProject.Enum.AllEnums;
 
 namespace PtnDemoProject.Services
 {
@@ -13,7 +18,7 @@ namespace PtnDemoProject.Services
             _context = context;
         }
 
-        public UserDto Login(UserDto request)
+        public User Login(User request)
         {
             try
             {
@@ -21,7 +26,11 @@ namespace PtnDemoProject.Services
                 if (request != null)
                 {
                     var users = _context.Users.ToList();
-                    UserDto? user = _context.Users.FirstOrDefault(u => u.Username == request.Username && u.Password == request.Password);
+                    User? user = _context.Users.FirstOrDefault(u => u.Username == request.Username && u.Password == request.Password);
+                    if(user != null)
+                    {
+                        request.JwtToken = PrepareToken(user);
+                    }
                     return user;
                 }
                 return null;
@@ -33,7 +42,27 @@ namespace PtnDemoProject.Services
             
         }
 
-        public List<UserDto> GetAllUsers()
+        private string PrepareToken(User user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes("Signature_Secret_Key"); // Secret key can be changed.
+            ClaimsIdentity claimsIdentity = new ClaimsIdentity();
+            claimsIdentity.AddClaim(new Claim("Userid", user.Id.ToString()));
+            claimsIdentity.AddClaim(new Claim("Username", user.Username));
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = claimsIdentity,
+                Expires = DateTime.Now.AddHours(ConstantValues.TokenExpirationHour),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenToWrite = tokenHandler.WriteToken(token);
+
+            return tokenToWrite;
+        }
+
+        public List<User> GetAllUsers()
         {
             try
             {
@@ -45,7 +74,7 @@ namespace PtnDemoProject.Services
             }
         }
 
-        public int? Register(UserDto user)
+        public int? Register(User user)
         {
             try
             {

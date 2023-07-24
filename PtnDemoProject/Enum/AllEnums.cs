@@ -5,6 +5,10 @@ namespace PtnDemoProject.Enum
 {
     public class AllEnums
     {
+        public static class ConstantValues
+        {
+            public const int TokenExpirationHour = 1;
+        }
         public enum ResponseStrings
         {
             // TODO ktolga: Localization için düzenlenmeli bu kısım
