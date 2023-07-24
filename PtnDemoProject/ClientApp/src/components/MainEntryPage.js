@@ -22,6 +22,7 @@ function MainEntryPage() {
 
     const handleToggle = () => {
         setIsLogin((prevIsLogin) => !prevIsLogin);
+
     };
 
     const handleButtonClicked = () => {
@@ -34,17 +35,19 @@ function MainEntryPage() {
     const handleLogin = () => {
         /*Login başarılıysa buraya düşecek ve config'e yönlendirecek, yukardaki kısım yani */
         setIsLoggedIn(true);
+        console.log("logged in");
+        navigate('/config');
     }
 
     return (
-        <>
+        <div>
             <PanteonLogo />
             <Button onClick={handleButtonClicked}>Config'e Git</Button>
             <div>
                 {/* Your Main page content */}
-                {isLogin ? <Login onToggle={handleToggle} /> : <Register onToggle={handleToggle} />}
+                {isLogin ? <Login onToggle={handleToggle} handleLogin={handleLogin} /> : <Register onToggle={handleToggle} />}
             </div>
-        </>
+        </div>
     );
 }
 

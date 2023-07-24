@@ -16,6 +16,7 @@ namespace PtnDemoProject.Enum
             InsertFailed = 5,
             UpdateFailed = 6,
             DeleteFailed = 7,
+            Unauthorize = 8,
 
         }
 

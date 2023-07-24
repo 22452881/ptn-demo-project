@@ -12,24 +12,25 @@ const styles = {
     },
 };
 
-let username = '';
-let password = '';
 
-const login = async () => {
-    debugger;
-    const response = await apicaller.login(username, password);
-    console.log(response);
-};
+const Login = ({ onToggle, handleLogin }) => {
+    let username = '';
+    let password = '';
 
-function setUsername(event) {
-    username = event.target.value;
-}
+    function setUsername(event) {
+        username = event.target.value;
+    }
 
-function setPassword(event) {
-    password = event.target.value;
-}
+    function setPassword(event) {
+        password = event.target.value;
+    }
+    const login = async () => {
+        const response = await apicaller.login(username, password);
+        if (response && response.status == 200) {
+            handleLogin();
+        }
+    };
 
-const Login = ({ onToggle }) => {
     return (
         <div className="login-form">
             <div className="input-container">

@@ -29,11 +29,11 @@ namespace PtnDemoProject.Controllers
            
             if(user != null)
             {
-                return Ok("Harun Esrayı Sevmiyor");
-            } else
-            {
-                return Unauthorized();
-            }
+                return new OkObjectResult((ResponseStrings.FetchedSuccessfully, user, true, 200));
+            } 
+            
+            return new OkObjectResult((ResponseStrings.Unauthorize, user, true, 401));
+            
             
         }
 
@@ -44,6 +44,7 @@ namespace PtnDemoProject.Controllers
             
             var users = _authService.GetAllUsers();
             return new OkObjectResult((ResponseStrings.FetchedSuccessfully, users, true, 200));
+
         }
 
 
