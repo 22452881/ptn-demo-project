@@ -1,16 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using PtnDemoProject.Attributes;
 using PtnDemoProject.DTO;
 using PtnDemoProject.Services;
 
 namespace PtnDemoProject.Controllers
 {
+    [CustomAuthorizeAttribute]
     [ApiController]
     [Route("api/[controller]")]
     public class ConfigurationController : ControllerBase
     {
-        private readonly MongoDBService _mongoService;
+        private readonly ConfigurationService _mongoService;
 
-        public ConfigurationController(MongoDBService mongoDBService)
+        public ConfigurationController(ConfigurationService mongoDBService)
         {
             _mongoService = mongoDBService;
         }
@@ -30,6 +34,7 @@ namespace PtnDemoProject.Controllers
         }
 
         [HttpDelete("id")]
+        [Route("{*id}")]
         public async Task<IActionResult> DeleteConfiguration(string id)
         {
             await _mongoService.DeleteConfigAsync(id);

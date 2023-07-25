@@ -2,13 +2,18 @@ import React, { Component, useState } from 'react';
 import Login from './Login';
 import Register from './Register';
 import { useNavigate } from 'react-router-dom';
-import { TextField, Button } from '@mui/material';
 
 function MainEntryPage() {
+    const navigate = useNavigate();
+
+    if (localStorage.token) {
+        window.location = '/config'
+    }
+
     const [isLogin, setIsLogin] = useState(true);
     const [buttonStatus, setButtonStatus] = useState(true);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const navigate = useNavigate();
+
 
     const handleToggle = () => {
         setIsLogin((prevIsLogin) => !prevIsLogin);
@@ -16,7 +21,6 @@ function MainEntryPage() {
     };
 
     const handleLogin = () => {
-        /*Login başarılıysa buraya düşecek ve config'e yönlendirecek, yukardaki kısım yani */
         setIsLoggedIn(true);
         navigate('/config');
     }

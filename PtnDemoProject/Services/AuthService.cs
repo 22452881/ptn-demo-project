@@ -1,5 +1,4 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using Microsoft.VisualBasic;
 using PtnDemoProject.Data;
 using PtnDemoProject.DTO;
 using PtnDemoProject.Interfaces;
@@ -78,12 +77,21 @@ namespace PtnDemoProject.Services
         {
             try
             {
-                //Object dololuğu ve mail doğruluğu kontrol edilecek
                 if(user != null && user.Email != null)
                 {
-                    _context.Users.Add(user);
-                    _context.SaveChanges();
-                    return user.Id;
+                    var existingUser = _context.Users.FirstOrDefault(u => u.Username == user.Username || u.Email == user.Email);
+                    if (existingUser == null)
+                    {
+                        _context.Users.Add(user);
+                        _context.SaveChanges();
+                        return user.Id;
+                        
+                    } 
+                    else
+                    {
+                        return -1;
+                    }
+
                 }
 
                 return null;

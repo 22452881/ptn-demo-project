@@ -44,10 +44,10 @@ const Login = ({ onToggle, handleLogin }) => {
                     fullWidth
                     sx={{ input: { color: 'grey' } }}
                     InputLabelProps={{
-                        style: { color: 'grey' }, // Etiket (label) rengi
+                        style: { color: 'grey' },
                     }}
                     InputProps={{
-                        style: { color: 'grey' }, // Metin (input) rengi
+                        style: { color: 'grey' },
                     }}
                 />
             </div>
@@ -61,10 +61,10 @@ const Login = ({ onToggle, handleLogin }) => {
                     fullWidth
                     sx={{ input: { color: 'grey' } }}
                     InputLabelProps={{
-                        style: { color: 'grey' }, // Etiket (label) rengi
+                        style: { color: 'grey' },
                     }}
                     InputProps={{
-                        style: { color: 'grey' }, // Metin (input) rengi
+                        style: { color: 'grey' },
                     }}
                 />
             </div>

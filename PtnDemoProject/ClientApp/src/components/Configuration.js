@@ -44,7 +44,7 @@ export default function Configuration() {
         <>
 
             <Box
-                sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: '82vh' }}
+                sx={{ flexGrow: 1, bgcolor: '#3b3939', display: 'flex', height: '82vh' }}
             >
                 <Tabs
                     orientation="vertical"
@@ -54,15 +54,12 @@ export default function Configuration() {
                     aria-label="Vertical tabs example"
                     sx={{ borderRight: 1, borderColor: 'divider' }}
                 >
-                    <Tab label="Building Management" />
-                    <Tab label="Building Types" />
+                    <Tab className="config-tab" label="Building Management" />
                 </Tabs>
                 <TabPanel value={value} index={0}>
                     <BuildingManagement />
                 </TabPanel>
-                <TabPanel value={value} index={1}>
-                    Item Two
-                </TabPanel>
+
 
             </Box>
         </>

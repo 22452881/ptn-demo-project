@@ -1,16 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PtnDemoProject.Attributes;
 using PtnDemoProject.DTO;
 using PtnDemoProject.Services;
 
 namespace PtnDemoProject.Controllers
 {
+    [CustomAuthorizeAttribute]
     [ApiController]
     [Route("api/[controller]")]
     public class BuildingTypeController : Controller
     {
-        private readonly MongoDBService _mongoService;
+        // BuildingType eklenmek vs. istenirse diye yazıldı.
+        private readonly ConfigurationService _mongoService;
 
-        public BuildingTypeController(MongoDBService mongoDBService)
+        public BuildingTypeController(ConfigurationService mongoDBService)
         {
             _mongoService = mongoDBService;
         }
@@ -30,6 +33,7 @@ namespace PtnDemoProject.Controllers
         }
 
         [HttpDelete("id")]
+        [Route("{*id}")]
         public async Task<IActionResult> DeleteBuildingType(string id)
         {
             await _mongoService.DeleteBuildingTypeAsync(id);

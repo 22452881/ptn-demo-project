@@ -9,6 +9,9 @@ import CssBaseline from '@mui/material/CssBaseline';
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
+    background: {
+      default: '#3b3939',
+    },
   },
 });
 export default class App extends Component {

@@ -1,5 +1,5 @@
-import { Component } from "react";
-import { Grid, Button, TextField, Autocomplete } from '@mui/material';
+import React, { Component } from 'react';
+import { Grid, Button, TextField, Autocomplete, IconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import Dialog from '@mui/material/Dialog';
@@ -7,6 +7,9 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import apicaller from '../utils/api'
+import SnackbarComp from './Snackbar';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 const Column = styled(Paper)(({ theme }) => ({
     ...theme.typography.body2,
@@ -15,57 +18,56 @@ const Column = styled(Paper)(({ theme }) => ({
     color: theme.palette.text.secondary,
 }));
 
-const data = [
-    {
-        buildingType: 'Farm',
-        buildingCost: 15000,
-        constructionTime: 50
-    },
-    {
-        buildingType: 'Academy',
-        buildingCost: 18000,
-        constructionTime: 100
-    },
-    {
-        buildingType: 'Headquarters',
-        buildingCost: 27000,
-        constructionTime: 150
-    },
-];
-
-// const buildingTypes = [
-//     // { label: 'Farm', value: 0 },
-//     // { label: 'Academy', value: 1 },
-//     // { label: 'Headquarters', value: 2 },
-//     // { label: 'LumberMill', value: 3 },
-//     // { label: 'Barracks', value: 4 },
-// ];
-
-
-
 export default class BuildingManagement extends Component {
     static displayName = 'Building Management';
-
-
 
     constructor(props) {
         super(props);
         this.state = {
             buildingTypes: [],
-            open: false,
             buildingType: null,
             buildingTypeId: null,
             buildingCost: null,
-            constructionTime: null
+            constructionTime: null,
+            constructionTimeErrorMessage: null,
+            buildingCostErrorMessage: null,
+            data: [],
+            filteredBuildingTypes: [],
+            open: false,
+            openSnackbar: false,
+            snackbarMessage: null,
+            snackbarSeverity: null
         }
         this.handleClickOpen = this.handleClickOpen.bind(this);
-        this.handleClose = this.handleClose.bind(this);
-        this.handleAdd = this.handleAdd.bind(this);
+        this.handleCloseConfigPopup = this.handleCloseConfigPopup.bind(this);
+        this.handleAddConfiguration = this.handleAddConfiguration.bind(this);
         this.buildingTypechange = this.buildingTypechange.bind(this);
         this.buildingCostchange = this.buildingCostchange.bind(this);
         this.constructionTimechange = this.constructionTimechange.bind(this);
 
+        this.getConfigurationData();
         this.getBuildingTypes();
+    }
+    showSnackbar = (message, severity) => {
+        this.setState({
+            openSnackbar: true, snackbarMessage: message, snackbarSeverity: severity,
+        });
+    };
+
+    handleCloseSnackbar = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        this.setState({
+            openSnackbar: false
+        });
+    };
+
+    getConfigurationData = async () => {
+        const response = await apicaller.CONFIGURATION.getAllConfigData();
+        if (response && response.data) {
+            this.setState({ data: response.data })
+        }
     }
 
     getBuildingTypes = async () => {
@@ -85,24 +87,37 @@ export default class BuildingManagement extends Component {
         };
         const response = await apicaller.CONFIGURATION.add(configuration);
 
-        if (response && response.data) {
-            data.push(configuration);
+        if (response && response.status == 200) {
+            this.getConfigurationData();
         }
 
-        this.handleClose();
+        this.handleCloseConfigPopup();
     };
 
+    handleDelete = async (id) => {
+        const response = await apicaller.CONFIGURATION.delete(id);
+
+        if (response && response.status == 200) {
+            this.getConfigurationData();
+        }
+    }
+
     handleClickOpen = () => {
+        const existingBuildings = this.state.data.map(item =>
+            (item.buildingType)
+        )
+
         this.setState({
             open: true,
             buildingType: null,
             buildingCost: null,
             buildingTypeId: null,
-            constructionTime: null
+            constructionTime: null,
+            filteredBuildingTypes: this.state.buildingTypes.filter(t => existingBuildings.indexOf(t.name) == -1)
         })
     };
 
-    handleClose = () => {
+    handleCloseConfigPopup = () => {
         this.setState({
             open: false,
             buildingType: null,
@@ -112,8 +127,13 @@ export default class BuildingManagement extends Component {
         })
     };
 
-    handleAdd = () => {
+    handleAddConfiguration = () => {
+        if (this.state.constructionTime < 30 || this.state.constructionTime > 1800) {
+            this.showSnackbar("Value must be between 30 and 1800", "error");
+            return;
+        }
         this.addConfiguration();
+
     };
 
     buildingTypechange = (event, option) => {
@@ -123,14 +143,20 @@ export default class BuildingManagement extends Component {
         })
     };
     buildingCostchange = (event) => {
-        this.setState({
-            buildingCost: event.target.value
-        })
+        const value = event.target.value;
+        if (value < 0) {
+            this.setState({ buildingCostErrorMessage: 'Value must be greater than 0' });
+        } else {
+            this.setState({ constructionTime: value, buildingCostErrorMessage: '' });
+        }
     };
     constructionTimechange = (event) => {
-        this.setState({
-            constructionTime: event.target.value
-        })
+        const value = event.target.value;
+        if (value < 30 || value > 1800) {
+            this.setState({ constructionTimeErrorMessage: 'Value must be between 30 and 1800' });
+        } else {
+            this.setState({ constructionTime: value, constructionTimeErrorMessage: '' });
+        }
     };
 
 
@@ -141,31 +167,48 @@ export default class BuildingManagement extends Component {
                 <Button variant="outlined" className="configuration-add-button" onClick={this.handleClickOpen} >+</Button>
 
                 <Grid container spacing={2} sx={{ width: 1 }}>
-                    <Grid item xs={4}>
+                    <Grid item xs={3}>
                         <Column>Building Type</Column>
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={3}>
                         <Column>Building Cost</Column>
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={3}>
                         <Column>Construction Time</Column>
                     </Grid>
-                    {data.map((d, i) =>
-                        Object.values(d).map((v, j) =>
-                            <Grid item key={`${i}.${j}`} xs={4}><Column>{v}</Column></Grid>
-                        )
-
-                    )}
+                    <Grid item xs={3}>
+                        <Column><SettingsIcon fontSize='small' /></Column>
+                    </Grid>
+                    {this.state.data.map((d, i) => (
+                        <React.Fragment key={i}>
+                            <Grid item xs={3}>
+                                <Column>{d.buildingType}</Column>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Column>{d.buildingCost}</Column>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Column>{d.constructionTime}</Column>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <Column>
+                                    <IconButton sx={{ padding: '0px' }} size='small' aria-label="delete" color="error" onClick={() => this.handleDelete(d.id)}>
+                                        <DeleteIcon fontSize='small' />
+                                    </IconButton>
+                                </Column>
+                            </Grid>
+                        </React.Fragment>
+                    ))}
                 </Grid>
 
-                <Dialog open={this.state.open} onClose={this.handleClose} >
+                <Dialog open={this.state.open} onClose={this.handleCloseConfigPopup} >
                     <DialogTitle>Add New Configuration</DialogTitle>
-                    <DialogContent>
+                    <DialogContent sx={{ height: 350, width: 400 }}>
 
                         <Autocomplete
                             disablePortal
                             id="buildingType"
-                            options={this.state.buildingTypes}
+                            options={this.state.filteredBuildingTypes}
                             sx={{ width: 300 }}
                             renderInput={(params) => <TextField fullWidth variant="standard" {...params} label="Building Type" />}
                             onChange={this.buildingTypechange}
@@ -177,21 +220,43 @@ export default class BuildingManagement extends Component {
                             fullWidth
                             variant="standard"
                             onChange={this.buildingCostchange}
-                        /><TextField
+                            inputProps={{
+                                type: "number",
+                                min: 0
+                            }}
+                        />
+                        {this.state.buildingCostErrorMessage && (
+                            <p style={{ color: 'red' }}>{this.state.buildingCostErrorMessage}</p>
+                        )}
+                        <TextField
                             margin="dense"
                             id="constructionTime"
-                            label="Construction Time"
+                            label="Construction Time(sec)"
                             fullWidth
                             variant="standard"
                             onChange={this.constructionTimechange}
+                            inputProps={{
+                                type: "number",
+                                min: 30,
+                                max: 1800,
+                            }}
                         />
+                        {this.state.constructionTimeErrorMessage && (
+                            <p style={{ color: 'red' }}>{this.state.constructionTimeErrorMessage}</p>
+                        )}
 
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.handleClose}>Cancel</Button>
-                        <Button onClick={this.handleAdd}>Add</Button>
+                        <Button onClick={this.handleCloseConfigPopup}>Cancel</Button>
+                        <Button onClick={this.handleAddConfiguration}>Add</Button>
                     </DialogActions>
                 </Dialog>
+                <SnackbarComp
+                    open={this.state.openSnackbar}
+                    message={this.state.snackbarMessage}
+                    severity={this.state.snackbarSeverity}
+                    handleClose={this.handleCloseSnackbar}
+                />
             </>
         );
     }

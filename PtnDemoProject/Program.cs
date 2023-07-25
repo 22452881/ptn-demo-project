@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using PtnDemoProject.Data;
 using PtnDemoProject.Interfaces;
 using PtnDemoProject.Model;
@@ -42,7 +41,7 @@ if(!string.IsNullOrEmpty(connStr))
 builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<IAuthService, AuthService>();
 builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("MongoDB"));
-builder.Services.AddSingleton<MongoDBService>();
+builder.Services.AddSingleton<ConfigurationService>();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Panteon Demo", Version = "v1" });
@@ -87,7 +86,6 @@ if (app.Environment.IsDevelopment())
 }
 app.UseSwagger();
 app.UseSwaggerUI();
-
 
 app.UseStaticFiles();
 

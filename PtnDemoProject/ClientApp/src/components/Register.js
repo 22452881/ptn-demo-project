@@ -32,8 +32,14 @@ const Register = ({ onToggle, handleRegister }) => {
 
     const register = async () => {
         const response = await apicaller.AUTH.register(email, username, password);
-        if (response && response.data) {
-            handleRegister();
+        if (response) {
+            if (response.status == 200) {
+                handleRegister();
+            } else if (response.status == 409) {
+                window.alert('There is a user with the username or email you entered!')
+            } else {
+                window.alert('Error Occured!')
+            }
         }
     };
 
@@ -48,10 +54,10 @@ const Register = ({ onToggle, handleRegister }) => {
                     onChange={handleEmailChange}
                     sx={{ input: { color: 'grey' } }}
                     InputLabelProps={{
-                        style: { color: 'grey' }, // Etiket (label) rengi
+                        style: { color: 'grey' },
                     }}
                     InputProps={{
-                        style: { color: 'grey' }, // Metin (input) rengi
+                        style: { color: 'grey' },
                     }}
                 />
             </div>
@@ -64,10 +70,10 @@ const Register = ({ onToggle, handleRegister }) => {
                     onChange={handleUsernameChange}
                     sx={{ input: { color: 'grey' } }}
                     InputLabelProps={{
-                        style: { color: 'grey' }, // Etiket (label) rengi
+                        style: { color: 'grey' },
                     }}
                     InputProps={{
-                        style: { color: 'grey' }, // Metin (input) rengi
+                        style: { color: 'grey' },
                     }}
                 />
             </div>
@@ -81,15 +87,14 @@ const Register = ({ onToggle, handleRegister }) => {
                     onChange={handlePasswordChange}
                     sx={{ input: { color: 'grey' } }}
                     InputLabelProps={{
-                        style: { color: 'grey' }, // Etiket (label) rengi
+                        style: { color: 'grey' },
                     }}
                     InputProps={{
-                        style: { color: 'grey' }, // Metin (input) rengi
+                        style: { color: 'grey' },
                     }}
                 />
             </div>
 
-            {/* Register'a tıkladıktan sonra login'e yönlendirmesi lazım */}
             <Button className='login-btn' style={styles.button} onClick={register} variant="outlined" >REGISTER</Button>
             <p className='toggle-text'>Do you have an account? <span onClick={onToggle}>Login</span></p>
         </div>

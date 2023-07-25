@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using PtnDemoProject.Data;
 using PtnDemoProject.DTO;
 using PtnDemoProject.Interfaces;
-using System.Linq;
-using static PtnDemoProject.Enum.AllEnums;
 
 namespace PtnDemoProject.Controllers
 {
@@ -12,12 +10,10 @@ namespace PtnDemoProject.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly DataContext _context;
         private readonly IAuthService _authService;
 
         public AuthController(DataContext context, IAuthService authService)
         {
-            _context = context;
             _authService = authService;
         }
 
@@ -37,27 +33,25 @@ namespace PtnDemoProject.Controllers
             
         }
 
-        [Route("allusers")]
-        [HttpGet]
-        public IActionResult GetAllUsers()
-        {
-            
-            var users = _authService.GetAllUsers();
-            return new OkObjectResult(users);
-
-        }
-
 
         [Route("register")]
         [HttpPost]
         public IActionResult Register([FromBody] UserDto user)
         {
             int? userId = _authService.Register(user);
-            if(userId != null)
+            if(userId == null)
+            {
+                return new BadRequestResult();
+                
+            }
+            else if(userId == -1)
+            {
+                return new ConflictResult();
+            } 
+            else
             {
                 return new OkObjectResult(userId);
             }
-            return new OkObjectResult(userId);
         }
     }
 }

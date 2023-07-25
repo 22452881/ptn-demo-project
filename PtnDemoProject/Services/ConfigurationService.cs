@@ -6,12 +6,12 @@ using PtnDemoProject.Model;
 
 namespace PtnDemoProject.Services
 {
-    public class MongoDBService
+    public class ConfigurationService
     {
         private readonly IMongoCollection<ConfigurationDto> _configurationCollection;
         private readonly IMongoCollection<BuildingTypeDto> _buildingTypeCollection;
 
-        public MongoDBService(IOptions<MongoDBSettings> mongoDBSettings)
+        public ConfigurationService(IOptions<MongoDBSettings> mongoDBSettings)
         {
             MongoClient client = new (mongoDBSettings.Value.ConnectionURI);
             IMongoDatabase database = client.GetDatabase(mongoDBSettings.Value.DatabaseName);
