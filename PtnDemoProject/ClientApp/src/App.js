@@ -1,0 +1,35 @@
+import React, { Component } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import AppRoutes from './AppRoutes';
+import { Layout } from './components/Layout'
+import './custom.css';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    background: {
+      default: '#3b3939',
+    },
+  },
+});
+export default class App extends Component {
+  static displayName = App.name;
+
+  render() {
+    return (
+      <ThemeProvider theme={darkTheme}>
+        <CssBaseline />
+        <Layout>
+          <Routes>
+            {AppRoutes.map((route, index) => {
+              const { element, ...rest } = route;
+              return <Route key={index} {...rest} element={element} />;
+            })}
+          </Routes>
+        </Layout>
+      </ThemeProvider>
+    );
+  }
+}
