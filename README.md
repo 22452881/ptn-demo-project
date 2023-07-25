@@ -1,1 +1,1 @@
-# ptn-demo-project
+# Panteon Demo Project
