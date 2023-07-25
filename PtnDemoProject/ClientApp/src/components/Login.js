@@ -1,32 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TextField, Button } from '@mui/material';
 import apicaller from '../utils/api'
 
-const styles = {
-    button: {
-        color: 'grey',
-        borderColor: 'grey',
-    },
-    input: {
-        color: 'grey',
-    },
-};
-
-
 const Login = ({ onToggle, handleLogin }) => {
-    let username = '';
-    let password = '';
+    const styles = {
+        button: {
+            color: 'grey',
+            borderColor: 'grey',
+        },
+        input: {
+            color: 'grey',
+        },
+    };
 
-    function setUsername(event) {
-        username = event.target.value;
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+
+
+    const handleUsernameChange = (event) => {
+        setUsername(event.target.value)
     }
 
-    function setPassword(event) {
-        password = event.target.value;
+    const handlePasswordChange = (event) => {
+        setPassword(event.target.value)
     }
+
     const login = async () => {
-        const response = await apicaller.login(username, password);
-        if (response && response.status == 200) {
+        const response = await apicaller.AUTH.login(username, password);
+        if (response && response.data) {
+            localStorage.token = response.data.jwtToken;
             handleLogin();
         }
     };
@@ -38,7 +40,7 @@ const Login = ({ onToggle, handleLogin }) => {
                     label="Username"
                     type="search"
                     variant="filled"
-                    onChange={setUsername}
+                    onChange={handleUsernameChange}
                     fullWidth
                     sx={{ input: { color: 'grey' } }}
                     InputLabelProps={{
@@ -55,7 +57,7 @@ const Login = ({ onToggle, handleLogin }) => {
                     label="Password"
                     type="password"
                     variant="filled"
-                    onChange={setPassword}
+                    onChange={handlePasswordChange}
                     fullWidth
                     sx={{ input: { color: 'grey' } }}
                     InputLabelProps={{
@@ -66,8 +68,8 @@ const Login = ({ onToggle, handleLogin }) => {
                     }}
                 />
             </div>
-            <Button className='login-btn' style={styles.button} variant="outlined" onClick={login}>Giriş Yap</Button>
-            <p>Hesabın Yok Mu? <span onClick={onToggle}>Hemen Kaydol</span></p>
+            <Button className='login-btn' style={styles.button} variant="outlined" onClick={login}>LOGIN</Button>
+            <p className='toggle-text'>Don't you have an account? <a onClick={onToggle}>Register Now</a></p>
         </div>
     );
 };

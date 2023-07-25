@@ -1,22 +1,32 @@
 import React, { Component } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import AppRoutes from './AppRoutes';
-import { Container } from 'reactstrap';
+import { Layout } from './components/Layout'
 import './custom.css';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+});
 export default class App extends Component {
   static displayName = App.name;
 
   render() {
     return (
-      <Container>
-        <Routes>
-          {AppRoutes.map((route, index) => {
-            const { element, ...rest } = route;
-            return <Route key={index} {...rest} element={element} />;
-          })}
-        </Routes>
-      </Container>
+      <ThemeProvider theme={darkTheme}>
+        <CssBaseline />
+        <Layout>
+          <Routes>
+            {AppRoutes.map((route, index) => {
+              const { element, ...rest } = route;
+              return <Route key={index} {...rest} element={element} />;
+            })}
+          </Routes>
+        </Layout>
+      </ThemeProvider>
     );
   }
 }

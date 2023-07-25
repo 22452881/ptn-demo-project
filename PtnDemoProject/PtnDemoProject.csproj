@@ -22,6 +22,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="MongoDB.Driver" Version="2.20.0" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
@@ -36,10 +37,6 @@
     <Content Remove="$(SpaRoot)**" />
     <None Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="DTO\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

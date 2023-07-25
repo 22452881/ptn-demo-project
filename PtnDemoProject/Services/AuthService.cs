@@ -1,8 +1,8 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualBasic;
 using PtnDemoProject.Data;
+using PtnDemoProject.DTO;
 using PtnDemoProject.Interfaces;
-using PtnDemoProject.Model;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -18,18 +18,18 @@ namespace PtnDemoProject.Services
             _context = context;
         }
 
-        public User Login(User request)
+        public UserDto Login(UserDto request, ResponseDto responseDto)
         {
             try
             {
-               
                 if (request != null)
                 {
-                    var users = _context.Users.ToList();
-                    User? user = _context.Users.FirstOrDefault(u => u.Username == request.Username && u.Password == request.Password);
+                    UserDto? user = _context.Users.FirstOrDefault(u => u.Username == request.Username && u.Password == request.Password);
                     if(user != null)
                     {
-                        request.JwtToken = PrepareToken(user);
+                        string JwtToken = PrepareToken(user);
+                        responseDto.Result = user;
+                        responseDto.JwtToken = JwtToken;
                     }
                     return user;
                 }
@@ -42,10 +42,10 @@ namespace PtnDemoProject.Services
             
         }
 
-        private string PrepareToken(User user)
+        private string PrepareToken(UserDto user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes("Signature_Secret_Key"); // Secret key can be changed.
+            var key = Encoding.ASCII.GetBytes("Secret_Key_Signature_Secret_Key_Esra_Panteon"); // Secret key can be changed.
             ClaimsIdentity claimsIdentity = new ClaimsIdentity();
             claimsIdentity.AddClaim(new Claim("Userid", user.Id.ToString()));
             claimsIdentity.AddClaim(new Claim("Username", user.Username));
@@ -62,7 +62,7 @@ namespace PtnDemoProject.Services
             return tokenToWrite;
         }
 
-        public List<User> GetAllUsers()
+        public List<UserDto> GetAllUsers()
         {
             try
             {
@@ -74,7 +74,7 @@ namespace PtnDemoProject.Services
             }
         }
 
-        public int? Register(User user)
+        public int? Register(UserDto user)
         {
             try
             {

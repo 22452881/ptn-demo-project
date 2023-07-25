@@ -25,14 +25,14 @@ namespace PtnDemoProject.Controllers
         [HttpPost]
         public IActionResult Login([FromBody] UserDto request)
         {
-            UserDto user = _authService.Login(request);
-           
+            ResponseDto response = new();
+            UserDto user = _authService.Login(request, response);
             if(user != null)
             {
-                return new OkObjectResult((ResponseStrings.FetchedSuccessfully, user, true, 200));
+                return new OkObjectResult(response);
             } 
             
-            return new OkObjectResult((ResponseStrings.Unauthorize, user, true, 401));
+            return Unauthorized();
             
             
         }
@@ -43,7 +43,7 @@ namespace PtnDemoProject.Controllers
         {
             
             var users = _authService.GetAllUsers();
-            return new OkObjectResult((ResponseStrings.FetchedSuccessfully, users, true, 200));
+            return new OkObjectResult(users);
 
         }
 
@@ -55,9 +55,9 @@ namespace PtnDemoProject.Controllers
             int? userId = _authService.Register(user);
             if(userId != null)
             {
-                return new OkObjectResult((ResponseStrings.AddedSuccesfully, user.Id, true, 200));
+                return new OkObjectResult(userId);
             }
-            return new OkObjectResult((ResponseStrings.InsertFailed, user.Id, true, 400));
+            return new OkObjectResult(userId);
         }
     }
 }

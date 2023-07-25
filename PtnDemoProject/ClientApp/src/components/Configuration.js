@@ -16,6 +16,7 @@ function TabPanel(props) {
             id={`vertical-tabpanel-${index}`}
             aria-labelledby={`vertical-tab-${index}`}
             {...other}
+            className='tab-panel'
         >
             {value === index && (
                 <Box sx={{ p: 3 }}>
@@ -40,28 +41,30 @@ export default function Configuration() {
     };
 
     return (
-        <Box
-            sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: 224 }}
-        >
-            <Tabs
-                orientation="vertical"
-                variant="scrollable"
-                value={value}
-                onChange={handleChange}
-                aria-label="Vertical tabs example"
-                sx={{ borderRight: 1, borderColor: 'divider' }}
-            >
-                <Tab label="Building Management" />
-                <Tab label="Building Types" />
-            </Tabs>
-            <TabPanel value={value} index={0}>
-                Item One
-                <BuildingManagement />
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-                Item Two
-            </TabPanel>
+        <>
 
-        </Box>
+            <Box
+                sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: '82vh' }}
+            >
+                <Tabs
+                    orientation="vertical"
+                    variant="scrollable"
+                    value={value}
+                    onChange={handleChange}
+                    aria-label="Vertical tabs example"
+                    sx={{ borderRight: 1, borderColor: 'divider' }}
+                >
+                    <Tab label="Building Management" />
+                    <Tab label="Building Types" />
+                </Tabs>
+                <TabPanel value={value} index={0}>
+                    <BuildingManagement />
+                </TabPanel>
+                <TabPanel value={value} index={1}>
+                    Item Two
+                </TabPanel>
+
+            </Box>
+        </>
     );
 }

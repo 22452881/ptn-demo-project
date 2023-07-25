@@ -1,47 +1,48 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { Collapse, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './NavMenu.css';
 
-export class NavMenu extends Component {
-  static displayName = NavMenu.name;
+const NavMenu = () => {
+  const [collapsed, setCollapsed] = useState(true);
+  const navigate = useNavigate();
 
-  constructor (props) {
-    super(props);
+  const toggleNavbar = () => {
+    setCollapsed(!collapsed);
+  };
 
-    this.toggleNavbar = this.toggleNavbar.bind(this);
-    this.state = {
-      collapsed: true
-    };
-  }
+  const logOut = () => {
+    localStorage.removeItem("token");
+    navigate('/');
+  };
 
-  toggleNavbar () {
-    this.setState({
-      collapsed: !this.state.collapsed
-    });
-  }
 
-  render() {
-    return (
-      <header>
-        <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" container light>
-          <NavbarBrand tag={Link} to="/">PtnDemoProject</NavbarBrand>
-          <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
-          <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed} navbar>
-            <ul className="navbar-nav flex-grow">
-              <NavItem>
-                <NavLink tag={Link} className="text-dark" to="/">Home</NavLink>
+  return (
+    <header>
+      <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" container light>
+        <NavbarBrand tag={Link} to="/"><img
+          alt=""
+          src={process.env.PUBLIC_URL + '/assets/logo.png'}
+          width="150"
+          height="30"
+          className="d-inline-block align-top"
+        />
+        </NavbarBrand>
+        <NavbarToggler onClick={toggleNavbar} className="mr-2" />
+        <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!collapsed} navbar>
+          <ul className="navbar-nav flex-grow">
+            {localStorage.token &&
+              <NavItem >
+                <NavLink tag={Link} className="text-dark" to="/" onClick={logOut}>Log Out</NavLink>
               </NavItem>
-              <NavItem>
-                <NavLink tag={Link} className="text-dark" to="/counter">Counter</NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink tag={Link} className="text-dark" to="/fetch-data">Fetch data</NavLink>
-              </NavItem>
-            </ul>
-          </Collapse>
-        </Navbar>
-      </header>
-    );
-  }
+            }
+          </ul>
+        </Collapse>
+      </Navbar>
+    </header>
+  );
 }
+
+export default NavMenu;
+
