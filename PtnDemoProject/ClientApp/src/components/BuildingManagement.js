@@ -147,7 +147,7 @@ export default class BuildingManagement extends Component {
         if (value < 0) {
             this.setState({ buildingCostErrorMessage: 'Value must be greater than 0' });
         } else {
-            this.setState({ constructionTime: value, buildingCostErrorMessage: '' });
+            this.setState({ buildingCost: value, buildingCostErrorMessage: '' });
         }
     };
     constructionTimechange = (event) => {
